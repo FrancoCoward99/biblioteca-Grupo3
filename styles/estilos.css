@@ -9,7 +9,7 @@
     }
 
     .login-image {
-      background-image: url('imagenes/ArmariodeLibros-Login.jpg');
+      background-image: url('../imagenes/ArmariodeLibros-Login.jpg');
       background-size: cover;
       background-position: center;
     }
@@ -27,5 +27,5 @@
 }
 
 .body-inicio{
-  background-image: url('Imagenes/ChatGPT\ Image\ 8\ jun\ 2025\,\ 12_13_23\ p.m..png');
+  background-image: url('../imagenes/ChatGPT\ Image\ 8\ jun\ 2025\,\ 12_13_23\ p.m..png');
 }
