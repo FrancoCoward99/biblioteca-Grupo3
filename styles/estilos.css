@@ -26,6 +26,25 @@
   border: 2px solid #74c69d;
 }
 
+.card-img-top{
+  height:250px;
+  object-fit:cover;
+  width:100%;
+}
+
+.filtros-caja {
+  width: 220px;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+.libro-img {
+  height: 280px;
+  object-fit: cover;
+}
+
+
 .body-inicio{
   background-image: url('../imagenes/ChatGPT\ Image\ 8\ jun\ 2025\,\ 12_13_23\ p.m..png');
 }

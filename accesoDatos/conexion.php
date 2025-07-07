@@ -5,10 +5,11 @@ try{
 
     $host = "localhost";
     $user = "root";
-    $password = "Guitarra.99";
+    $password = "hola";
     $db = "biblioteca_web";
+    $port = 3307;
 
-    $mysqli = new mysqli($host, $user, $password, $db);
+    $mysqli = new mysqli($host, $user, $password, $db, $port);
 
     if($mysqli->connect_error){
         throw new exception("Sucedió un error al realizar la conexión a la base de datos.");
@@ -27,7 +28,7 @@ try{
 
 function cerrarConexion($mysqli){
 
-    if($mysqli instanceof myqsli){
+    if($mysqli instanceof mysqli){
         $mysqli->close();
     }
 
