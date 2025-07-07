@@ -9,7 +9,7 @@ if (!isset($_SESSION['nombre_usuario']) || $_SESSION['rol'] !== 'administrador')
 require_once '../accesoDatos/conexion.php';
 $mysqli = abrirConexion();
 
-$resultado = $mysqli->query("SELECT id, nombre, correo, rol FROM usuarios");
+$resultado = $mysqli->query("SELECT id, nombre, correo, rol,fecha_creacion,grado FROM usuarios");
 
 if (!$resultado) {
     die("Error en la consulta: " . $mysqli->error);
@@ -50,10 +50,12 @@ if (!$resultado) {
   <table class="table table-bordered table-hover align-middle text-center">
     <thead >
       <tr>
+        <th>ID</th>
         <th>Nombre</th>
         <th>Correo</th>
         <th>Rol</th>
         <th>Grado</th>
+        <th>Fecha de creación</th>
         <th>Estado</th>
         <th>Acciones</th>
       </tr>
@@ -66,6 +68,7 @@ if (!$resultado) {
           <td><?php echo ($usuario['correo']) ?></td>
           <td><?php echo ($usuario['rol']) ?></td>
           <td><?php echo ($usuario['grado']) ?></td>
+          <td><?php echo ($usuario['fecha_creacion']) ?></td>
           <td><span class="badge bg-success">Activo</span></td>
           <td>
             <a href="editar_usuario.php?id=<?= $usuario['id'] ?>" class="btn btn-sm btn-outline-primary">
