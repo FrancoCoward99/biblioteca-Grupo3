@@ -6,6 +6,7 @@ try{
     $host = "localhost";
     $user = "root";
     $password = "123";
+
     $db = "biblioteca_web";
 
     $mysqli = new mysqli($host, $user, $password, $db);
