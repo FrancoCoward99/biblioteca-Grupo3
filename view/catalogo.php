@@ -65,19 +65,19 @@ $nombre = $_SESSION['nombre_usuario'];
             <div class="card" style="width: 200px;">
               <img src="imagenes/computernetworking.jpg" class="card-img-top libro-img" alt="Computer Networking">
               <div class="card-body text-center">
-                <a href="#" class="btn btn-success btn-sm">Ver Más Detalles</a>
+                <a href="detalle.php?id=2" class="btn btn-success btn-sm">Ver Más Detalles</a>
               </div>
             </div>
             <div class="card" style="width: 200px;">
               <img src="imagenes/cleancode.jpg" class="card-img-top libro-img" alt="Clean Code">
               <div class="card-body text-center">
-                <a href="#" class="btn btn-success btn-sm">Ver Más Detalles</a>
+                <a href="detalle.php?id=1" class="btn btn-success btn-sm">Ver Más Detalles</a>
               </div>
             </div>
             <div class="card" style="width: 200px;">
               <img src="imagenes/softwareengineer.jpg" class="card-img-top libro-img" alt="Software Engineering">
               <div class="card-body text-center">
-                <a href="#" class="btn btn-success btn-sm">Ver Más Detalles</a>
+                <a href="detalle.php?id=3" class="btn btn-success btn-sm">Ver Más Detalles</a>
               </div>
             </div>
           </div>
@@ -87,7 +87,7 @@ $nombre = $_SESSION['nombre_usuario'];
             <div class="card" style="width: 200px;">
               <img src="imagenes/principiosquimica.jpg" class="card-img-top" alt="Principios de Química">
               <div class="card-body text-center">
-                <a href="#" class="btn btn-success btn-sm">Ver Más Detalles</a>
+                <a href="detalle.php?id=4" class="btn btn-success btn-sm">Ver Más Detalles</a>
               </div>
             </div>
             <div class="card" style="width: 200px;">
@@ -99,7 +99,7 @@ $nombre = $_SESSION['nombre_usuario'];
             <div class="card" style="width: 200px;">
               <img src="imagenes/quimicaorganica.png" class="card-img-top" alt="Química Orgánica">
               <div class="card-body text-center">
-                <a href="#" class="btn btn-success btn-sm">Ver Más Detalles</a>
+                <a href="detalle.php?id=2" class="btn btn-success btn-sm">Ver Más Detalles</a>
               </div>
             </div>
           </div>
