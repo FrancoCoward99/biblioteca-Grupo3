@@ -113,7 +113,7 @@ $libro = $resultado->fetch_assoc();
 
                     <div class="mt-3 d-flex gap-2">
                         <a href="catalogo.php" class="btn btn-outline-secondary fs-4">← Volver al catálogo</a>
-                        <a href="#" class="btn btn-success fs-4">Solicitar Préstamo</a>
+                        <a href="solicitud.php" class="btn btn-success fs-4">Solicitar Préstamo</a>
                     </div>
                 </section>
 
