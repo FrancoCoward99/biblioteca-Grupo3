@@ -1,5 +1,5 @@
 <?php
-function abrirConexion(){
+/*function abrirConexion(){
 
 try{
 
@@ -33,8 +33,7 @@ function cerrarConexion($mysqli){
     }
 
 }
-?>
-<?php
+*/
 function abrirConexion(){
 
 try{
