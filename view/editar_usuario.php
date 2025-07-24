@@ -52,13 +52,18 @@ if (!$usuario) {
   <meta charset="UTF-8">
   <title>Editar Usuario</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+  body{
+  background-image: url('../imagenes/ChatGPT\ Image\ 8\ jun\ 2025\,\ 12_13_23\ p.m..png');
+    }
+</style>
 </head>
 <body>
 <?php include 'componentes/navbar_admin.php'; ?>
 
 <div class="container mt-5">
-  <h2 class="mb-4">Editar Usuario</h2>
   <form method="POST" class="border p-4 rounded bg-light">
+    <h2 class="mb-4">Editar Usuario</h2>
     <div class="mb-3">
       <label for="nombre" class="form-label">Nombre</label>
       <input type="text" name="nombre" id="nombre" class="form-control" value="<?= htmlspecialchars($usuario['nombre']) ?>" required>

@@ -35,7 +35,7 @@ if (!$resultado) {
   }
 
   body {
-    background-color: #f8f9fa;
+    background-image: url('../imagenes/ChatGPT\ Image\ 8\ jun\ 2025\,\ 12_13_23\ p.m..png');
   }
 </style>
 
