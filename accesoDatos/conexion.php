@@ -5,7 +5,7 @@ try{
 
     $host = "localhost";
     $user = "root";
-    $password = "123";
+    $password = "";
 
     $db = "biblioteca_web";
 
