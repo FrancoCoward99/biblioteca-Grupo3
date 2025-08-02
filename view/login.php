@@ -5,69 +5,69 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 require_once '../accesoDatos/conexion.php';
-try{
-    $mysqli = abrirConexion();
-}catch(Exception $e){
-    die('Error al conectar a la base de datos: ' . $e->getMessage());
+
+$mysqli = abrirConexion();
+if (!$mysqli) {
+    die('Error al conectar a la base de datos.');
 }
 
 $mensaje = '';
 $tipoAlerta = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-  $correoUsuario = $_POST['correo'] ?? '';
-  $contrasenna = $_POST['contrasena'] ?? '';
+    $correoUsuario = $_POST['correo'] ?? '';
+    $contrasenna = $_POST['contrasena'] ?? '';
 
-  if ($correoUsuario !== '' && $contrasenna !== '') {
-    
-    $sql = "SELECT id, nombre, contrasena, rol FROM usuarios WHERE correo = ? LIMIT 1";
+    if ($correoUsuario !== '' && $contrasenna !== '') {
 
-    if ($stmt = $mysqli->prepare($sql)) {
-      $stmt->bind_param('s', $correoUsuario);
-      $stmt->execute();
-      $stmt->store_result();
+        $sql = "SELECT id, nombre, contrasena, rol FROM usuarios WHERE correo = ? LIMIT 1";
 
-      if ($stmt->num_rows === 1) {
-        $stmt->bind_result($idUsuario, $nombreUsuario, $contrasenaBase, $rolUsuario);
-        $stmt->fetch();
-        $stmt->close();
-        cerrarConexion($mysqli);
+        if ($stmt = $mysqli->prepare($sql)) {
+            $stmt->bind_param('s', $correoUsuario);
+            $stmt->execute();
+            $stmt->store_result();
 
-        if ($contrasenna === $contrasenaBase) {
-         
-          $_SESSION['id_usuario'] = $idUsuario;
-          $_SESSION['nombre_usuario'] = $nombreUsuario;
-          $_SESSION['rol'] = $rolUsuario;
+            if ($stmt->num_rows === 1) {
+                $stmt->bind_result($idUsuario, $nombreUsuario, $contrasenaBase, $rolUsuario);
+                $stmt->fetch();
 
-          // Condicion si es admin o estudiente
-          if ($rolUsuario === 'administrador') {
-            header("Location: admin_homepage.php");
-          } else {
-            header("Location: estudiante_homepage.php");
-          }
-          exit;
+                if (password_verify($contrasenna, $contrasenaBase)) {
+                    $_SESSION['id_usuario'] = $idUsuario;
+                    $_SESSION['nombre_usuario'] = $nombreUsuario;
+                    $_SESSION['rol'] = $rolUsuario;
+
+                    $stmt->close();
+                    cerrarConexion($mysqli);
+
+                    if ($rolUsuario === 'administrador') {
+                        header("Location: admin_homepage.php");
+                    } else {
+                        header("Location: estudiante_homepage.php");
+                    }
+                    exit;
+                } else {
+                    $mensaje = "Contraseña incorrecta.";
+                    $tipoAlerta = "danger";
+                }
+            } else {
+                $mensaje = "El correo indicado no existe.";
+                $tipoAlerta = "danger";
+            }
+
+            $stmt->close();
         } else {
-          $mensaje = "Contraseña incorrecta.";
-          $tipoAlerta = "danger";
+            $mensaje = "Error al preparar la consulta.";
+            $tipoAlerta = "danger";
         }
-      } else {
-        $mensaje = "El correo indicado no existe.";
-        $tipoAlerta = "danger";
-      }
 
-      $stmt->close();
+        $mysqli->close();
     } else {
-      $mensaje = "Error al preparar la consulta.";
-      $tipoAlerta = "danger";
+        $mensaje = "Ingrese usuario y contraseña.";
+        $tipoAlerta = "warning";
     }
-
-    $mysqli->close();
-  } else {
-    $mensaje = "Ingrese usuario y contraseña.";
-    $tipoAlerta = "warning";
-  }
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="es">
