@@ -27,14 +27,16 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["agregar"])) {
     $autor = $_POST["autor"];
     $isbn = $_POST["isbn"];
     $categoria = $_POST["categoria"];
+    $formato = $_POST["formato"]; // ← ahora lo recibís también
 
     $sql = "INSERT INTO libros (titulo, isbn, categoria, autores, formato, cantidad_disponible)
-            VALUES (?, ?, ?, ?, 'Fisico', 1)";
+            VALUES (?, ?, ?, ?, ?, 1)";
 
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ssss", $titulo, $isbn, $categoria, $autor);
+    $stmt->bind_param("sssss", $titulo, $isbn, $categoria, $autor, $formato);
     $stmt->execute();
 }
+
 
 $nombre = $_SESSION['nombre_usuario'];
 
@@ -69,7 +71,8 @@ $libros = $conn->query("SELECT * FROM libros");
                         <?php echo htmlspecialchars($nombre); ?>
                     </span>
                     <i class="bi bi-person-circle fs-4"></i>
-                </a>
+
+
                 <ul class="dropdown-menu dropdown-menu-end">
                     <li><a class="dropdown-item" href="logout.php">Cerrar sesión</a></li>
                 </ul>
@@ -97,6 +100,13 @@ $libros = $conn->query("SELECT * FROM libros");
                 <label class="form-label">Categoría</label>
                 <input type="text" name="categoria" class="form-control" />
             </div>
+            <div class="col-md-6">
+    <label class="form-label">Formato</label>
+    <select name="formato" class="form-select" required>
+        <option value="Fisico">Físico</option>
+        <option value="Digital">Digital</option>
+    </select>
+</div>
             <div class="col-12 d-flex justify-content-end">
                 <button type="submit" name="agregar" class="btn btn-success">
                     <i class="bi bi-plus-circle"></i> Agregar Libro
@@ -128,6 +138,10 @@ $libros = $conn->query("SELECT * FROM libros");
                             <a href="?eliminar=<?= $row['id'] ?>" class="btn btn-danger btn-sm" onclick="return confirm('¿Eliminar este libro?');">
                                 <i class="bi bi-trash"></i> Eliminar
                             </a>
+                                            </a>
+                <a href="editarLibro.php?id=<?= $row['id'] ?>" class="btn btn-warning btn-sm">
+    <i class="bi bi-pencil"></i> Editar
+</a>
                         </td>
                     </tr>
                 <?php } ?>

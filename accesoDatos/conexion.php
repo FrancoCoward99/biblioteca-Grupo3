@@ -1,16 +1,11 @@
 <?php
-/*function abrirConexion(){
+function abrirConexion(){
 
 try{
 
     $host = "localhost";
     $user = "root";
-<<<<<<< HEAD
     $password = "root";
-=======
-    $password = "";
-
->>>>>>> origin/Daniela
     $db = "biblioteca_web";
     $port = 3306;
 
@@ -38,7 +33,7 @@ function cerrarConexion($mysqli){
     }
 
 }
-*/
+/*
 function abrirConexion(){
 
 try{
@@ -72,5 +67,5 @@ function cerrarConexion($mysqli){
         $mysqli->close();
     }
 
-}
+}*/
 ?>
