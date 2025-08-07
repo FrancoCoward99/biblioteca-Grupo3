@@ -6,7 +6,7 @@ include "../accesoDatos/conexion.php";
 $conn = abrirConexion();
 
 
-if (!isset($_SESSION['nombre_usuario']) || $_SESSION['rol'] !== 'estudiante') {
+if (!isset($_SESSION['nombre_usuario']) || $_SESSION['rol'] !== 'administrador') {
     header("Location: login.php");
     exit;
 }
