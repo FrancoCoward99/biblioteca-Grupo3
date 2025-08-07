@@ -6,30 +6,17 @@ error_reporting(E_ALL);
 
 require_once '../accesoDatos/conexion.php';
 
-<<<<<<< Updated upstream
 $mysqli = abrirConexion();
 if (!$mysqli) {
-    die('Error al conectar a la base de datos.');
-=======
-//registro de errores aca
-function registrarError($error, $usuario = 'No autenticado') {
+    // Registrar error de conexión a la base de datos
     $fecha = date('Y-m-d H:i:s');
-    $linea = "|Fecha:$fecha|Error: $error | Pantalla: login.php | Usuario: $usuario\n";
+    $linea = "|Fecha:" . $fecha . "|Error: Error al conectar a la base de datos | Pantalla: login.php | Usuario: No autenticado\n";
     
     $archivo = fopen("../logs/errores.txt", "a") or die("No se puede abrir el archivo de errores.");
     fwrite($archivo, $linea);
     fclose($archivo);
-}
-
-try {
-    $mysqli = abrirConexion();
-    if (!$mysqli) {
-        throw new Exception("Error al conectar a la base de datos");
-    }
-} catch(Exception $e) {
-    registrarError($e->getMessage());
-    die('Error al conectar a la base de datos: ' . $e->getMessage());
->>>>>>> Stashed changes
+    
+    die('Error al conectar a la base de datos.');
 }
 
 $mensaje = '';
@@ -40,8 +27,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $contrasenna = $_POST['contrasena'] ?? '';
 
     if ($correoUsuario !== '' && $contrasenna !== '') {
-<<<<<<< Updated upstream
-
         $sql = "SELECT id, nombre, contrasena, rol FROM usuarios WHERE correo = ? LIMIT 1";
 
         if ($stmt = $mysqli->prepare($sql)) {
@@ -70,78 +55,57 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 } else {
                     $mensaje = "Contraseña incorrecta.";
                     $tipoAlerta = "danger";
+                    
+                    // Registrar error de contraseña incorrecta
+                    $fecha = date('Y-m-d H:i:s');
+                    $linea = "|Fecha:" . $fecha . "|Error: Intento de login con contraseña incorrecta | Pantalla: login.php | Usuario: " . $correoUsuario . "\n";
+                    
+                    $archivo = fopen("../logs/errores.txt", "a") or die("No se puede abrir el archivo de errores.");
+                    fwrite($archivo, $linea);
+                    fclose($archivo);
                 }
             } else {
                 $mensaje = "El correo indicado no existe.";
                 $tipoAlerta = "danger";
+                
+                // Registrar error de correo no existente
+                $fecha = date('Y-m-d H:i:s');
+                $linea = "|Fecha:" . $fecha . "|Error: Intento de login con correo no registrado | Pantalla: login.php | Usuario: " . $correoUsuario . "\n";
+                
+                $archivo = fopen("../logs/errores.txt", "a") or die("No se puede abrir el archivo de errores.");
+                fwrite($archivo, $linea);
+                fclose($archivo);
             }
 
-=======
-        $sql = "SELECT id, nombre, contrasena, rol FROM usuarios WHERE correo = ? LIMIT 1";
-
-        if ($stmt = $mysqli->prepare($sql)) {
-            $stmt->bind_param('s', $correoUsuario);
-            
-            if (!$stmt->execute()) {
-                registrarError("Error al ejecutar la consulta", $correoUsuario);
-                $mensaje = "Error en el sistema. Intente nuevamente.";
-                $tipoAlerta = "danger";
-            } else {
-                $stmt->store_result();
-
-                if ($stmt->num_rows === 1) {
-                    $stmt->bind_result($idUsuario, $nombreUsuario, $contrasenaBase, $rolUsuario);
-                    $stmt->fetch();
-                    
-                    if ($contrasenna === $contrasenaBase) {
-                        $_SESSION['id_usuario'] = $idUsuario;
-                        $_SESSION['nombre_usuario'] = $nombreUsuario;
-                        $_SESSION['rol'] = $rolUsuario;
-
-                        $stmt->close();
-                        cerrarConexion($mysqli);
-
-                        if ($rolUsuario === 'administrador') {
-                            header("Location: admin_homepage.php");
-                        } else {
-                            header("Location: estudiante_homepage.php");
-                        }
-                        exit;
-                    } else {
-                        $mensaje = "Contraseña incorrecta.";
-                        $tipoAlerta = "danger";
-                        registrarError("Intento de login con contraseña incorrecta", $correoUsuario);
-                    }
-                } else {
-                    $mensaje = "El correo indicado no existe.";
-                    $tipoAlerta = "danger";
-                    registrarError("Intento de login con correo no registrado", $correoUsuario);
-                }
-            }
->>>>>>> Stashed changes
             $stmt->close();
         } else {
             $mensaje = "Error al preparar la consulta.";
             $tipoAlerta = "danger";
-<<<<<<< Updated upstream
+            
+            // Registrar error en la preparación de la consulta
+            $fecha = date('Y-m-d H:i:s');
+            $linea = "|Fecha:" . $fecha . "|Error: Error al preparar la consulta SQL | Pantalla: login.php | Usuario: " . $correoUsuario . "\n";
+            
+            $archivo = fopen("../logs/errores.txt", "a") or die("No se puede abrir el archivo de errores.");
+            fwrite($archivo, $linea);
+            fclose($archivo);
         }
 
-=======
-            registrarError("Error al preparar la consulta SQL", $correoUsuario);
-        }
->>>>>>> Stashed changes
         $mysqli->close();
     } else {
         $mensaje = "Ingrese usuario y contraseña.";
         $tipoAlerta = "warning";
-<<<<<<< Updated upstream
-=======
-        registrarError("Intento de login sin proporcionar credenciales");
->>>>>>> Stashed changes
+        
+        // Registrar intento de login sin datos
+        $fecha = date('Y-m-d H:i:s');
+        $linea = "|Fecha:" . $fecha . "|Error: Intento de login sin proporcionar credenciales | Pantalla: login.php | Usuario: No proporcionado\n";
+        
+        $archivo = fopen("../logs/errores.txt", "a") or die("No se puede abrir el archivo de errores.");
+        fwrite($archivo, $linea);
+        fclose($archivo);
     }
 }
 ?>
-
 
 <!DOCTYPE html>
 <html lang="es">
@@ -196,5 +160,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   </div>
 
 </body>
-
 </html>
+
+<script>
+document.querySelector("form").addEventListener("submit", function(e) {
+  const email = document.querySelector("input[name='correo']").value.trim();
+  const password = document.querySelector("input[name='contrasena']").value.trim();
+
+  if (!email || !password) {
+    e.preventDefault();
+    alert("Debe ingresar usuario y contraseña.");
+  }
+});
+</script>
