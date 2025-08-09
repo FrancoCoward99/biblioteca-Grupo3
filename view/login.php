@@ -5,67 +5,105 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 require_once '../accesoDatos/conexion.php';
-try{
-    $mysqli = abrirConexion();
-}catch(Exception $e){
-    die('Error al conectar a la base de datos: ' . $e->getMessage());
+
+$mysqli = abrirConexion();
+if (!$mysqli) {
+    // Registrar error de conexión a la base de datos
+    $fecha = date('Y-m-d H:i:s');
+    $linea = "|Fecha:" . $fecha . "|Error: Error al conectar a la base de datos | Pantalla: login.php | Usuario: No autenticado\n";
+    
+    $archivo = fopen("../logs/errores.txt", "a") or die("No se puede abrir el archivo de errores.");
+    fwrite($archivo, $linea);
+    fclose($archivo);
+    
+    die('Error al conectar a la base de datos.');
 }
 
 $mensaje = '';
 $tipoAlerta = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-  $correoUsuario = $_POST['correo'] ?? '';
-  $contrasenna = $_POST['contrasena'] ?? '';
+    $correoUsuario = $_POST['correo'] ?? '';
+    $contrasenna = $_POST['contrasena'] ?? '';
 
-  if ($correoUsuario !== '' && $contrasenna !== '') {
-    
-    $sql = "SELECT id, nombre, contrasena, rol FROM usuarios WHERE correo = ? LIMIT 1";
+    if ($correoUsuario !== '' && $contrasenna !== '') {
+        $sql = "SELECT id, nombre, contrasena, rol FROM usuarios WHERE correo = ? LIMIT 1";
 
-    if ($stmt = $mysqli->prepare($sql)) {
-      $stmt->bind_param('s', $correoUsuario);
-      $stmt->execute();
-      $stmt->store_result();
+        if ($stmt = $mysqli->prepare($sql)) {
+            $stmt->bind_param('s', $correoUsuario);
+            $stmt->execute();
+            $stmt->store_result();
 
-      if ($stmt->num_rows === 1) {
-        $stmt->bind_result($idUsuario, $nombreUsuario, $contrasenaBase, $rolUsuario);
-        $stmt->fetch();
-        $stmt->close();
-        cerrarConexion($mysqli);
+            if ($stmt->num_rows === 1) {
+                $stmt->bind_result($idUsuario, $nombreUsuario, $contrasenaBase, $rolUsuario);
+                $stmt->fetch();
 
-        if ($contrasenna === $contrasenaBase) {
-         
-          $_SESSION['id_usuario'] = $idUsuario;
-          $_SESSION['nombre_usuario'] = $nombreUsuario;
-          $_SESSION['rol'] = $rolUsuario;
+                if (password_verify($contrasenna, $contrasenaBase)) {
+                    $_SESSION['id_usuario'] = $idUsuario;
+                    $_SESSION['nombre_usuario'] = $nombreUsuario;
+                    $_SESSION['rol'] = $rolUsuario;
 
-          // Condicion si es admin o estudiente
-          if ($rolUsuario === 'administrador') {
-            header("Location: admin_homepage.php");
-          } else {
-            header("Location: estudiante_homepage.php");
-          }
-          exit;
+                    $stmt->close();
+                    cerrarConexion($mysqli);
+
+                    if ($rolUsuario === 'administrador') {
+                        header("Location: admin_homepage.php");
+                    } else {
+                        header("Location: estudiante_homepage.php");
+                    }
+                    exit;
+                } else {
+                    $mensaje = "Contraseña incorrecta.";
+                    $tipoAlerta = "danger";
+                    
+                    // Registrar error de contraseña incorrecta
+                    $fecha = date('Y-m-d H:i:s');
+                    $linea = "|Fecha:" . $fecha . "|Error: Intento de login con contraseña incorrecta | Pantalla: login.php | Usuario: " . $correoUsuario . "\n";
+                    
+                    $archivo = fopen("../logs/errores.txt", "a") or die("No se puede abrir el archivo de errores.");
+                    fwrite($archivo, $linea);
+                    fclose($archivo);
+                }
+            } else {
+                $mensaje = "El correo indicado no existe.";
+                $tipoAlerta = "danger";
+                
+                // Registrar error de correo no existente
+                $fecha = date('Y-m-d H:i:s');
+                $linea = "|Fecha:" . $fecha . "|Error: Intento de login con correo no registrado | Pantalla: login.php | Usuario: " . $correoUsuario . "\n";
+                
+                $archivo = fopen("../logs/errores.txt", "a") or die("No se puede abrir el archivo de errores.");
+                fwrite($archivo, $linea);
+                fclose($archivo);
+            }
+
+            $stmt->close();
         } else {
-          $mensaje = "Contraseña incorrecta.";
-          $tipoAlerta = "danger";
+            $mensaje = "Error al preparar la consulta.";
+            $tipoAlerta = "danger";
+            
+            // Registrar error en la preparación de la consulta
+            $fecha = date('Y-m-d H:i:s');
+            $linea = "|Fecha:" . $fecha . "|Error: Error al preparar la consulta SQL | Pantalla: login.php | Usuario: " . $correoUsuario . "\n";
+            
+            $archivo = fopen("../logs/errores.txt", "a") or die("No se puede abrir el archivo de errores.");
+            fwrite($archivo, $linea);
+            fclose($archivo);
         }
-      } else {
-        $mensaje = "El correo indicado no existe.";
-        $tipoAlerta = "danger";
-      }
 
-      $stmt->close();
+        $mysqli->close();
     } else {
-      $mensaje = "Error al preparar la consulta.";
-      $tipoAlerta = "danger";
+        $mensaje = "Ingrese usuario y contraseña.";
+        $tipoAlerta = "warning";
+        
+        // Registrar intento de login sin datos
+        $fecha = date('Y-m-d H:i:s');
+        $linea = "|Fecha:" . $fecha . "|Error: Intento de login sin proporcionar credenciales | Pantalla: login.php | Usuario: No proporcionado\n";
+        
+        $archivo = fopen("../logs/errores.txt", "a") or die("No se puede abrir el archivo de errores.");
+        fwrite($archivo, $linea);
+        fclose($archivo);
     }
-
-    $mysqli->close();
-  } else {
-    $mensaje = "Ingrese usuario y contraseña.";
-    $tipoAlerta = "warning";
-  }
 }
 ?>
 
@@ -122,5 +160,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   </div>
 
 </body>
-
 </html>
+
+<script>
+document.querySelector("form").addEventListener("submit", function(e) {
+  const email = document.querySelector("input[name='correo']").value.trim();
+  const password = document.querySelector("input[name='contrasena']").value.trim();
+
+  if (!email || !password) {
+    e.preventDefault();
+    alert("Debe ingresar usuario y contraseña.");
+  }
+});
+</script>
