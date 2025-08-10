@@ -46,7 +46,7 @@ $nombre = $_SESSION['nombre_usuario'];
         <i class="bi bi-book-fill fs-1 text-primary mb-3"></i>
         <h5 class="fw-bold">Gestión de Libros</h5>
         <p>Ver, agregar y actualizar libros del catálogo</p>
-        <a href="gestion_libros.php" class="btn btn-outline-primary">Ir al Módulo de Libros</a>
+        <a href="agregarLibro.php" class="btn btn-outline-primary">Ir al Módulo de Libros</a>
       </div>
     </div>
 

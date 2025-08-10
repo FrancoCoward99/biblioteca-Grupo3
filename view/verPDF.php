@@ -4,12 +4,13 @@ include "../accesoDatos/conexion.php";
 $conn = abrirConexion();
 
 include "componentes/navbar_admin.php";
-
+// Validar que haya id de libro
 $idLibro = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 if ($idLibro <= 0) {
     die("ID de libro inválido.");
 }
 
+// Obtener info del libro seleccionado
 $sql = "SELECT titulo, pdf_url, portada_url FROM libros WHERE id = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $idLibro);
@@ -22,6 +23,7 @@ if (!$libro || empty($libro['pdf_url']) || !file_exists("../" . $libro['pdf_url'
     die("No se encontró el PDF del libro o no existe el archivo.");
 }
 
+// Obtener todos los libros con PDF para la lista lateral
 $resLibrosPdf = $conn->query("SELECT id, titulo, portada_url FROM libros WHERE pdf_url IS NOT NULL AND pdf_url <> '' ORDER BY titulo ASC");
 ?>
 
@@ -31,34 +33,19 @@ $resLibrosPdf = $conn->query("SELECT id, titulo, portada_url FROM libros WHERE p
     <meta charset="UTF-8" />
     <title>Ver PDF - <?= htmlspecialchars($libro['titulo']) ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="../styles/estilos.css" />
+    <link rel="stylesheet" href="../styles/estilos.css">
     <style>
         body {
             background: #f8f9fa;
         }
-        .main-container {
-            max-width: 1100px;
-            margin: 40px auto; /* 40px arriba y abajo para padding */
-            display: flex;
-            gap: 30px;
-            justify-content: center;
-            align-items: flex-start;
-        }
         .pdf-viewer {
-            flex: 1 1 65%;
+            width: 100%;
             height: 600px;
             border: 1px solid #ddd;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
         .lista-libros {
-            flex: 1 1 30%;
             max-height: 600px;
             overflow-y: auto;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            background: white;
-            padding: 15px;
         }
         .list-group-item {
             display: block !important;
@@ -68,7 +55,6 @@ $resLibrosPdf = $conn->query("SELECT id, titulo, portada_url FROM libros WHERE p
             text-align: center;
             padding: 10px;
             margin-bottom: 10px;
-            box-shadow: 0 0 5px rgba(0,0,0,0.05);
         }
         .list-group-item.active {
             background-color: #0d6efd !important;
@@ -81,28 +67,19 @@ $resLibrosPdf = $conn->query("SELECT id, titulo, portada_url FROM libros WHERE p
             border-radius: 4px;
             margin-bottom: 8px;
         }
-        .list-group-item div {
-            font-size: 0.9rem;
-            font-weight: 600;
-            white-space: normal;
-            word-wrap: break-word;
-            color: inherit;
-        }
-        h3.text-center {
-            margin-top: 0;
-            margin-bottom: 30px;
-        }
     </style>
 </head>
 <body class="body-inicio">
 
 <div class="container">
-    <h3 class="text-center"><?= htmlspecialchars($libro['titulo']) ?></h3>
+    <!-- <h3 class="mb-4 text-center"><?= htmlspecialchars($libro['titulo']) ?></h3> -->
+    <div class="row">
+        <div class="col-md-8 mb-4">
+            <!-- PDF embebido -->
+            <embed src="../<?= htmlspecialchars($libro['pdf_url']) ?>" type="application/pdf" class="pdf-viewer" />
+        </div>
 
-    <div class="main-container">
-        <embed src="../<?= htmlspecialchars($libro['pdf_url']) ?>" type="application/pdf" class="pdf-viewer" />
-
-        <div class="lista-libros">
+        <div class="col-md-4 lista-libros">
             <?php if ($resLibrosPdf && $resLibrosPdf->num_rows > 0): ?>
                 <div class="list-group d-flex flex-wrap justify-content-center gap-3">
                 <?php while ($lib = $resLibrosPdf->fetch_assoc()):
@@ -113,7 +90,9 @@ $resLibrosPdf = $conn->query("SELECT id, titulo, portada_url FROM libros WHERE p
                 ?>
                     <a href="verPDF.php?id=<?= (int)$lib['id'] ?>" class="list-group-item list-group-item-action <?= $activo ?>">
                         <img src="<?= htmlspecialchars($portada) ?>" alt="Portada <?= htmlspecialchars($lib['titulo']) ?>" />
-                        <div><?= htmlspecialchars($lib['titulo']) ?></div>
+                        <div style="font-size: 0.9rem; font-weight: 600; color: <?= $activo ? 'white' : '#212529' ?>;">
+                            <?= htmlspecialchars($lib['titulo']) ?>
+                        </div>
                     </a>
                 <?php endwhile; ?>
                 </div>
@@ -123,6 +102,7 @@ $resLibrosPdf = $conn->query("SELECT id, titulo, portada_url FROM libros WHERE p
         </div>
     </div>
 </div>
+
 
 </body>
 </html>

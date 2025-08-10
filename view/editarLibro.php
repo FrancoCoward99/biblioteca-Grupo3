@@ -1,16 +1,25 @@
 <?php
 session_start();
-include "../accesoDatos/conexion.php";
-$conn = abrirConexion();
 
-if (!isset($_SESSION['nombre_usuario']) || $_SESSION['rol'] !== 'estudiante') {
+if (!isset($_SESSION['nombre_usuario']) || $_SESSION['rol'] !== 'administrador') {
     header("Location: login.php");
     exit;
 }
 
-$nombre = $_SESSION['nombre_usuario'];
+if (!isset($_GET['id'])) {
+    echo "No se recibió el ID del libro.";
+    exit;
+}
 
+$nombre = $_SESSION['nombre_usuario'];
 $id = intval($_GET["id"]);
+
+include "../accesoDatos/conexion.php";
+$conn = abrirConexion();
+if (!$conn) {
+    die("Error al conectar con la base de datos.");
+}
+
 $result = $conn->query("SELECT * FROM libros WHERE id = $id");
 
 if ($result->num_rows === 0) {
@@ -27,9 +36,49 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $categoria = $_POST["categoria"];
     $formato = $_POST["formato"];
 
-    $sql = "UPDATE libros SET titulo=?, autores=?, isbn=?, categoria=?, formato=? WHERE id=?";
+    // Mantener ruta actual de portada y pdf por defecto
+    $imagenNombre = $libro['portada_url'];
+    $pdfNombre = $libro['pdf_url'];
+
+    // Carpeta de portadas y pdfs
+    $carpetaPortadas = "../uploads/portadas/";
+    $carpetaPDF = "../uploads/pdf/";
+
+    // Procesar nueva imagen (si se sube)
+    if (isset($_FILES['imagen']) && $_FILES['imagen']['error'] === UPLOAD_ERR_OK) {
+        $tmpName = $_FILES['imagen']['tmp_name'];
+        $nombreArchivo = time() . '_' . basename($_FILES['imagen']['name']);
+        $rutaDestino = $carpetaPortadas . $nombreArchivo;
+
+        if (move_uploaded_file($tmpName, $rutaDestino)) {
+            $imagenNombre = "uploads/portadas/" . $nombreArchivo;
+        } else {
+            echo "Error al mover la imagen.";
+            exit;
+        }
+    }
+
+    // Procesar nuevo PDF (si se sube)
+    if (isset($_FILES['pdf']) && $_FILES['pdf']['error'] === UPLOAD_ERR_OK) {
+        $tmpNamePDF = $_FILES['pdf']['tmp_name'];
+        $nombreArchivoPDF = time() . '_' . basename($_FILES['pdf']['name']);
+        $rutaDestinoPDF = $carpetaPDF . $nombreArchivoPDF;
+
+        if (move_uploaded_file($tmpNamePDF, $rutaDestinoPDF)) {
+            $pdfNombre = "uploads/pdf/" . $nombreArchivoPDF;
+        } else {
+            echo "Error al mover el archivo PDF.";
+            exit;
+        }
+    }
+
+    $sql = "UPDATE libros SET titulo=?, autores=?, isbn=?, categoria=?, formato=?, portada_url=?, pdf_url=? WHERE id=?";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("sssssi", $titulo, $autor, $isbn, $categoria, $formato, $id);
+    if (!$stmt) {
+        die("Error en prepare: " . $conn->error);
+    }
+
+    $stmt->bind_param("sssssssi", $titulo, $autor, $isbn, $categoria, $formato, $imagenNombre, $pdfNombre, $id);
     $stmt->execute();
 
     header("Location: agregarLibro.php");
@@ -48,37 +97,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 </head>
 <body class="body-inicio">
 
-<header class="bg-white shadow-sm px-4 py-3 d-flex align-items-center justify-content-between">
-    <div class="d-flex align-items-center gap-3">
-        <img src="Imagenes/logo.png" alt="Logo SIBE" style="height: 40px;" />
-        <div class="position-relative w-100" style="max-width: 400px;">
-            <input type="text" class="form-control ps-4 pe-5 borde-buscador"
-                placeholder="Digite el Título, Autor o ISBN" />
-            <i class="bi bi-search position-absolute top-50 end-0 translate-middle-y me-3 text-muted"></i>
-        </div>
-    </div>
-                <nav class="d-flex align-items-center gap-4">
-            <a href="#" class="text-dark text-decoration-none">Libros</a>
-            <div class="dropdown">
-                <a href="#" class="d-flex align-items-center gap-2 text-dark text-decoration-none dropdown-toggle"
-                    data-bs-toggle="dropdown">
-                    <span class="fw-semibold">
-                        <?php echo htmlspecialchars($nombre); ?>
-                    </span>
-                    <i class="bi bi-person-circle fs-4"></i>
-
-
-                <ul class="dropdown-menu dropdown-menu-end">
-                    <li><a class="dropdown-item" href="logout.php">Cerrar sesión</a></li>
-                </ul>
-            </div>
-        </nav>
-</header>
+<?php include "componentes/navbar_admin.php"; ?>
 
 <main class="container mt-5 d-flex justify-content-center">
     <div class="card shadow p-4" style="max-width: 700px; width: 100%;">
         <h2 class="mb-4 text-center">Editar Libro</h2>
-        <form method="POST" class="needs-validation" novalidate>
+        <form method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
             <div class="mb-3">
                 <label for="titulo" class="form-label">Título</label>
                 <input id="titulo" type="text" class="form-control" name="titulo" value="<?= htmlspecialchars($libro['titulo']) ?>" required />
@@ -102,6 +126,20 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     <option value="Digital" <?= $libro['formato'] === 'Digital' ? 'selected' : '' ?>>Digital</option>
                 </select>
             </div>
+            <div class="mb-3">
+                <label for="imagen" class="form-label">Portada (Imagen)</label>
+                <input id="imagen" type="file" name="imagen" class="form-control" accept="image/*" />
+                <?php if (!empty($libro['portada_url'])): ?>
+                    <img src="../<?= htmlspecialchars($libro['portada_url']) ?>" alt="Portada actual" style="max-height: 150px; margin-top: 10px;">
+                <?php endif; ?>
+            </div>
+            <div class="mb-3">
+                <label for="pdf" class="form-label">Archivo PDF</label>
+                <input id="pdf" type="file" name="pdf" class="form-control" accept="application/pdf" />
+                <?php if (!empty($libro['pdf_url'])): ?>
+                    <a href="../<?= htmlspecialchars($libro['pdf_url']) ?>" target="_blank" class="btn btn-primary mt-2">Ver PDF actual</a>
+                <?php endif; ?>
+            </div>
             <div class="d-flex justify-content-center">
                 <button type="submit" class="btn btn-primary px-4">
                     <i class="bi bi-save"></i> Guardar Cambios
@@ -111,10 +149,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     </div>
 </main>
 
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
 
 <?php cerrarConexion($conn); ?>
+
 

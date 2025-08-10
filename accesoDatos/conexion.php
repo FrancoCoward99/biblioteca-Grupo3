@@ -1,87 +1,26 @@
 <?php
-function abrirConexion(){
-
-try{
-
+function abrirConexion() {
     $host = "localhost";
     $user = "root";
-    $password = "root";
-<<<<<<< HEAD
-=======
-=======
-    $password = "";
-<<<<<<< Updated upstream
-
->>>>>>> origin/Daniela
-=======
->>>>>>> Stashed changes
->>>>>>> cac5738dc434e1914d72a8acf0af0937de3c0cfa
+    $password = "root"; // Cambia aquí si tu contraseña es diferente
     $db = "biblioteca_web";
-    $port = 3306;
+    $port = 3306; // Cambia aquí si usas otro puerto
 
-<<<<<<< Updated upstream
-    $mysqli = new mysqli($host, $user, $password, $db, $port);
-=======
+    mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
-    $mysqli = new mysqli($host, $user, $password, $db);
->>>>>>> Stashed changes
-
-    if($mysqli->connect_error){
-        throw new exception("Sucedió un error al realizar la conexión a la base de datos.");
+    try {
+        $mysqli = new mysqli($host, $user, $password, $db, $port);
+        $mysqli->set_charset('utf8mb4');
+        return $mysqli;
+    } catch (Exception $e) {
+        error_log("Error de conexión: " . $e->getMessage());
+        return false;
     }
-
-    $mysqli->set_charset('utf8mb4');
-
-    return $mysqli;
-
-}catch (Exception $e){
-
-    return false;
 }
 
-}
-
-function cerrarConexion($mysqli){
-
-    if($mysqli instanceof mysqli){
+function cerrarConexion($mysqli) {
+    if ($mysqli instanceof mysqli) {
         $mysqli->close();
     }
-
 }
-/*
-function abrirConexion(){
-
-try{
-
-    $host = "localhost";
-    $user = "root";
-    $password = "hola";
-    $db = "biblioteca_web";
-    $port = "3307";
-  
-
-    $mysqli = new mysqli($host, $user, $password, $db, $port);
-
-    if($mysqli->connect_error){
-        throw new exception("Sucedió un error al realizar la conexión a la base de datos.");
-    }
-
-    $mysqli->set_charset('utf8mb4');
-
-    return $mysqli;
-
-}catch (Exception $e){
-
-    return false;
-}
-
-}
-
-function cerrarConexion($mysqli){
-
-    if($mysqli instanceof mysqli){
-        $mysqli->close();
-    }
-
-}*/
 ?>
