@@ -4,13 +4,12 @@ include "../accesoDatos/conexion.php";
 $conn = abrirConexion();
 
 include "componentes/navbar_admin.php";
-// Validar que haya id de libro
+
 $idLibro = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 if ($idLibro <= 0) {
     die("ID de libro inválido.");
 }
 
-// Obtener info del libro seleccionado
 $sql = "SELECT titulo, pdf_url, portada_url FROM libros WHERE id = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $idLibro);
@@ -23,7 +22,6 @@ if (!$libro || empty($libro['pdf_url']) || !file_exists("../" . $libro['pdf_url'
     die("No se encontró el PDF del libro o no existe el archivo.");
 }
 
-// Obtener todos los libros con PDF para la lista lateral
 $resLibrosPdf = $conn->query("SELECT id, titulo, portada_url FROM libros WHERE pdf_url IS NOT NULL AND pdf_url <> '' ORDER BY titulo ASC");
 ?>
 
@@ -75,7 +73,6 @@ $resLibrosPdf = $conn->query("SELECT id, titulo, portada_url FROM libros WHERE p
     <!-- <h3 class="mb-4 text-center"><?= htmlspecialchars($libro['titulo']) ?></h3> -->
     <div class="row">
         <div class="col-md-8 mb-4">
-            <!-- PDF embebido -->
             <embed src="../<?= htmlspecialchars($libro['pdf_url']) ?>" type="application/pdf" class="pdf-viewer" />
         </div>
 

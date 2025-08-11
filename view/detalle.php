@@ -1,134 +1,118 @@
 <?php
 session_start();
-include "../accesoDatos/conexion.php";
-$conn = abrirConexion();
-
-include "componentes/navbar_admin.php";
-
-$idLibro = isset($_GET['id']) ? (int)$_GET['id'] : 0;
-if ($idLibro <= 0) {
-    die("ID de libro inválido.");
+if (!isset($_SESSION['nombre_usuario']) || $_SESSION['rol'] !== 'estudiante') {
+    header("Location: login.php");
+    exit;
 }
 
-$sql = "SELECT titulo, pdf_url, portada_url FROM libros WHERE id = ?";
+require_once '../accesoDatos/conexion.php';
+$conn = abrirConexion();
+if (!$conn) { http_response_code(500); echo "Error de conexión a la base de datos."; exit; }
+
+$id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+if ($id <= 0) { die("ID de libro inválido."); }
+
+$sql = "SELECT id, titulo, autores, categoria, descripcion, formato,
+ cantidad_disponible, imagen, portada_url, pdf_url
+ FROM libros WHERE id = ?";
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $idLibro);
+$stmt->bind_param("i", $id);
 $stmt->execute();
-$result = $stmt->get_result();
-$libro = $result->fetch_assoc();
+$res = $stmt->get_result();
+$libro = $res->fetch_assoc();
 $stmt->close();
 
-if (!$libro || empty($libro['pdf_url']) || !file_exists("../" . $libro['pdf_url'])) {
-    die("No se encontró el PDF del libro o no existe el archivo.");
+if (!$libro) { die("Libro no encontrado."); }
+
+function isUrl(string $path): bool {
+    return stripos($path, 'http://') === 0 || stripos($path, 'https://') === 0;
+}
+function portadaSrc(array $libro): ?string {
+    if (!empty($libro['portada_url'])) return $libro['portada_url']; 
+    if (!empty($libro['imagen']))      return 'imagenes/' . $libro['imagen'];
+    return null;
+}
+function pdfDisponible(array $libro): bool {
+    if (empty($libro['pdf_url'])) return false;
+    if (isUrl($libro['pdf_url'])) return true;
+    $localPath = "../" . ltrim($libro['pdf_url'], '/');
+    return file_exists($localPath);
 }
 
-$resLibrosPdf = $conn->query("SELECT id, titulo, portada_url FROM libros WHERE pdf_url IS NOT NULL AND pdf_url <> '' ORDER BY titulo ASC");
+$hayPdf  = pdfDisponible($libro);
+$disp    = (int)$libro['cantidad_disponible'];
+$msg     = isset($_GET['msg']) ? $_GET['msg'] : '';
 ?>
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8" />
-    <title>Ver PDF - <?= htmlspecialchars($libro['titulo']) ?></title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="../styles/estilos.css" />
-    <style>
-        body {
-            background: #f8f9fa;
-        }
-        .main-container {
-            max-width: 1100px;
-            margin: 40px auto; /* 40px arriba y abajo para padding */
-            display: flex;
-            gap: 30px;
-            justify-content: center;
-            align-items: flex-start;
-        }
-        .pdf-viewer {
-            flex: 1 1 65%;
-            height: 600px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-        .lista-libros {
-            flex: 1 1 30%;
-            max-height: 600px;
-            overflow-y: auto;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            background: white;
-            padding: 15px;
-        }
-        .list-group-item {
-            display: block !important;
-            border-radius: 8px;
-            transition: background-color 0.3s;
-            width: 120px;
-            text-align: center;
-            padding: 10px;
-            margin-bottom: 10px;
-            box-shadow: 0 0 5px rgba(0,0,0,0.05);
-        }
-        .list-group-item.active {
-            background-color: #0d6efd !important;
-            color: white !important;
-        }
-        .list-group-item img {
-            width: 100px;
-            height: 130px;
-            object-fit: contain;
-            border-radius: 4px;
-            margin-bottom: 8px;
-        }
-        .list-group-item div {
-            font-size: 0.9rem;
-            font-weight: 600;
-            white-space: normal;
-            word-wrap: break-word;
-            color: inherit;
-        }
-        h3.text-center {
-            margin-top: 0;
-            margin-bottom: 30px;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <title>Detalle — <?= htmlspecialchars($libro['titulo']) ?></title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles/estilos.css" />
 </head>
 <body class="body-inicio">
 
-<div class="container">
-    <h3 class="text-center"><?= htmlspecialchars($libro['titulo']) ?></h3>
+<?php include 'componentes/navbar_estudiante.php'; ?>
 
-    <div class="main-container">
-        <embed src="../<?= htmlspecialchars($libro['pdf_url']) ?>" type="application/pdf" class="pdf-viewer" />
+<main class="container my-4">
+  <?php if ($msg === 'pdfnotfound'): ?>
+    <div class="alert alert-danger">El archivo PDF no se encontró en el servidor.</div>
+  <?php elseif ($msg === 'nopdf'): ?>
+    <div class="alert alert-warning">Este libro no tiene PDF disponible.</div>
+  <?php endif; ?>
 
-        <div class="lista-libros">
-            <?php if ($resLibrosPdf && $resLibrosPdf->num_rows > 0): ?>
-                <div class="list-group d-flex flex-wrap justify-content-center gap-3">
-                <?php while ($lib = $resLibrosPdf->fetch_assoc()):
-                    $portada = !empty($lib['portada_url']) && file_exists("../" . $lib['portada_url']) 
-                               ? "../" . $lib['portada_url'] 
-                               : "../imagenes/placeholder.png";
-                    $activo = $lib['id'] == $idLibro ? 'active' : '';
-                ?>
-                    <a href="verPDF.php?id=<?= (int)$lib['id'] ?>" class="list-group-item list-group-item-action <?= $activo ?>">
-                        <img src="<?= htmlspecialchars($portada) ?>" alt="Portada <?= htmlspecialchars($lib['titulo']) ?>" />
-                        <div><?= htmlspecialchars($lib['titulo']) ?></div>
-                    </a>
-                <?php endwhile; ?>
-                </div>
-            <?php else: ?>
-                <p class="text-center">No hay libros con PDF disponibles.</p>
-            <?php endif; ?>
+  <div class="card shadow-sm">
+    <div class="row g-0">
+      <div class="col-md-4 p-4 d-flex align-items-center justify-content-center">
+        <?php $src = portadaSrc($libro); ?>
+        <?php if ($src): ?>
+          <img src="<?= htmlspecialchars($src) ?>" alt="Portada"
+               class="img-fluid rounded" style="max-height:360px; object-fit:contain;">
+        <?php else: ?>
+          <svg class="bd-placeholder-img" width="100%" height="320" xmlns="http://www.w3.org/2000/svg">
+            <rect width="100%" height="100%" fill="#e9ecef"></rect>
+            <text x="50%" y="50%" text-anchor="middle" fill="#6c757d">Sin imagen</text>
+          </svg>
+        <?php endif; ?>
+      </div>
+
+      <div class="col-md-8 p-4">
+        <h1 class="h4 mb-2"><?= htmlspecialchars($libro['titulo']) ?></h1>
+        <div class="text-muted mb-3">
+          <?= htmlspecialchars($libro['autores'] ?? '') ?>
+          <?= !empty($libro['categoria']) ? ' · '.htmlspecialchars($libro['categoria']) : '' ?>
+          <?= !empty($libro['formato'])   ? ' · '.htmlspecialchars($libro['formato'])   : '' ?>
         </div>
+
+        <p class="mb-3"><?= nl2br(htmlspecialchars($libro['descripcion'] ?? '')) ?></p>
+
+        <div class="mb-3">
+          <span class="badge bg-<?= $disp > 0 ? 'success' : 'secondary' ?>">Disponibles: <?= $disp ?></span>
+        </div>
+
+        <div class="d-flex flex-wrap gap-2">
+          <?php if ($hayPdf): ?>
+            <a href="verPDF.php?id=<?= (int)$libro['id'] ?>" class="btn btn-primary">
+              Ver PDF
+            </a>
+          <?php endif; ?>
+
+          <?php if ($disp > 0): ?>
+            <a href="solicitud.php?id=<?= (int)$libro['id'] ?>" class="btn btn-success">
+              Solicitar préstamo
+            </a>
+          <?php endif; ?>
+
+          <a href="catalogo.php" class="btn btn-outline-secondary">Volver al catálogo</a>
+        </div>
+      </div>
     </div>
-</div>
+  </div>
+</main>
 
 </body>
 </html>
 
-<?php
-cerrarConexion($conn);
-?>
-
-
+<?php cerrarConexion($conn); ?>

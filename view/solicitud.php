@@ -7,13 +7,12 @@ if (!isset($_SESSION['nombre_usuario']) || $_SESSION['rol'] !== 'estudiante') {
 }
 
 $nombre = $_SESSION['nombre_usuario'];
-$correo = $_SESSION['correo_usuario'] ?? ''; // Asegúrate de guardarlo en login
+$correo = $_SESSION['correo_usuario'] ?? '';
 $id_usuario = $_SESSION['id_usuario'] ?? 0;
 
 require_once '../accesoDatos/conexion.php';
 $mysqli = abrirConexion();
 
-// Validar ID del libro
 if (!isset($_GET['id'])) {
     echo "ID de libro no proporcionado.";
     exit;

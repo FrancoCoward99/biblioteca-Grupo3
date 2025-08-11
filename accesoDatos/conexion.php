@@ -2,9 +2,9 @@
 function abrirConexion() {
     $host = "localhost";
     $user = "root";
-    $password = "root"; // Cambia aquí si tu contraseña es diferente
+    $password = "hola";
     $db = "biblioteca_web";
-    $port = 3306; // Cambia aquí si usas otro puerto
+    $port = 3307;
 
     mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
