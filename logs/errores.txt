@@ -3,3 +3,6 @@
 |Fecha:2025-08-07 19:02:44|Error: Error al conectar a la base de datos | Pantalla: login.php | Usuario: No autenticado
 |Fecha:2025-08-07 19:13:27|Error: Intento de login con contraseña incorrecta | Pantalla: login.php | Usuario: dani@gmail.com
 |Fecha:2025-08-07 21:11:03|Error: Intento de login con correo no registrado | Pantalla: login.php | Usuario: ejemplo@gmail.com
+|Fecha:2025-08-13 05:44:12|Error: Error al conectar a la base de datos | Pantalla: login.php | Usuario: No autenticado
+|Fecha:2025-08-13 05:45:26|Error: Error al conectar a la base de datos | Pantalla: login.php | Usuario: No autenticado
+|Fecha:2025-08-13 05:45:47|Error: Error al conectar a la base de datos | Pantalla: login.php | Usuario: No autenticado

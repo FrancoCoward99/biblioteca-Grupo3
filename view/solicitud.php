@@ -46,21 +46,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($stmt->execute()) {
         $mensaje = "¡Solicitud de préstamo registrada con éxito!";
         $tipo = "success";
+        $mostrarBoton = true;
     } else {
-        $mensaje = "Error al registrar la solicitud.";
+        $mensaje = "Error al registrar la solicitud. Por favor, inténtalo de nuevo.";
         $tipo = "danger";
+        $mostrarBoton = false;
     }
-    if ($stmt->execute()) {
-    $mensaje = "¡Solicitud de préstamo registrada con éxito!";
-    $tipo = "success";
-    $mostrarBoton = true;
-} else {
-    $mensaje = "Error al registrar la solicitud. Por favor, inténtalo de nuevo.";
-    $tipo = "danger";
-    $mostrarBoton = false;
 }
 
-}
+
 ?>
 
 <!DOCTYPE html>
