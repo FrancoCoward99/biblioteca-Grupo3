@@ -9,7 +9,7 @@
     }
 
     .login-image {
-      background-image: url('../imagenes/ArmariodeLibros-Login.jpg');
+      background-image: url('../view/imagenes/ArmariodeLibros-Login.jpg');
       background-size: cover;
       background-position: center;
     }

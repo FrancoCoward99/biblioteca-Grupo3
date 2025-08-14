@@ -6,3 +6,9 @@
 |Fecha:2025-08-13 05:44:12|Error: Error al conectar a la base de datos | Pantalla: login.php | Usuario: No autenticado
 |Fecha:2025-08-13 05:45:26|Error: Error al conectar a la base de datos | Pantalla: login.php | Usuario: No autenticado
 |Fecha:2025-08-13 05:45:47|Error: Error al conectar a la base de datos | Pantalla: login.php | Usuario: No autenticado
+|Fecha:2025-08-14 05:27:38|Error: Intento de login con correo no registrado | Pantalla: login.php | Usuario: franco99cr@gmail.com
+|Fecha:2025-08-14 06:20:02|Error: Intento de login con contraseña incorrecta | Pantalla: login.php | Usuario: lucas@gmail.com
+|Fecha:2025-08-14 06:20:10|Error: Intento de login con contraseña incorrecta | Pantalla: login.php | Usuario: lucas@gmail.com
+|Fecha:2025-08-14 06:20:14|Error: Intento de login con correo no registrado | Pantalla: login.php | Usuario: franco99cr@gmail.com
+|Fecha:2025-08-14 06:20:20|Error: Intento de login con contraseña incorrecta | Pantalla: login.php | Usuario: lucas@gmail.com
+|Fecha:2025-08-14 06:20:29|Error: Intento de login con contraseña incorrecta | Pantalla: login.php | Usuario: lucas@gmail.com
