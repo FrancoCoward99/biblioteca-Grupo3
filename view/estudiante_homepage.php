@@ -28,7 +28,12 @@ $libros = $result->fetch_all(MYSQLI_ASSOC);
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
   <link rel="stylesheet" href="../styles/estilos.css" />
 </head>
-<body class="body-inicio">
+<body class="body-inicio" style="
+    background-image: url('imagenes/ChatGPT\ Image\ 8\ jun\ 2025\,\ 12_13_23\ p.m..png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+">
 
 <?php include 'componentes/navbar_estudiante.php'; ?>
 
@@ -94,7 +99,7 @@ $libros = $result->fetch_all(MYSQLI_ASSOC);
           <p class="card-text">La biblioteca ha incorporado más de 50 títulos nuevos de autores reconocidos en el género de ciencia ficción.</p>
         </div>
         <div class="card-footer bg-white border-0 text-center">
-          <a href="#" class="btn btn-success btn-sm">Leer más</a>
+          <a href="noticia1.php" class="btn btn-success btn-sm">Leer más</a>
         </div>
       </div>
     </div>
@@ -107,7 +112,7 @@ $libros = $result->fetch_all(MYSQLI_ASSOC);
           <p class="card-text">Del 10 al 14 de septiembre, participa en nuestras charlas, talleres y presentaciones de autores locales.</p>
         </div>
         <div class="card-footer bg-white border-0 text-center">
-          <a href="#" class="btn btn-success btn-sm">Ver agenda</a>
+          <a href="noticia2.php" class="btn btn-success btn-sm">Ver agenda</a>
         </div>
       </div>
     </div>
@@ -120,7 +125,7 @@ $libros = $result->fetch_all(MYSQLI_ASSOC);
           <p class="card-text">Únete a nuestro club de lectura para jóvenes, donde cada mes debatimos un libro seleccionado por los miembros.</p>
         </div>
         <div class="card-footer bg-white border-0 text-center">
-          <a href="#" class="btn btn-success btn-sm">Unirme</a>
+          <a href="noticia3.php" class="btn btn-success btn-sm">Unirme</a>
         </div>
       </div>
     </div>
