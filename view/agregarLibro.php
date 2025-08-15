@@ -3,7 +3,6 @@ session_start();
 include "../accesoDatos/conexion.php";
 $conn = abrirConexion();
 
-// Verifica que sea administrador
 if (!isset($_SESSION['nombre_usuario']) || $_SESSION['rol'] !== 'administrador') {
     header("Location: login.php");
     exit;
@@ -11,11 +10,9 @@ if (!isset($_SESSION['nombre_usuario']) || $_SESSION['rol'] !== 'administrador')
 
 $nombre = $_SESSION['nombre_usuario'];
 
-// Eliminar libro
 if (isset($_GET["eliminar"])) {
     $idEliminar = intval($_GET["eliminar"]);
 
-    // Eliminar archivos físicos si existen
     $res = $conn->query("SELECT portada_url, pdf_url FROM libros WHERE id = $idEliminar");
     if ($res && $res->num_rows > 0) {
         $libro = $res->fetch_assoc();
@@ -32,14 +29,12 @@ if (isset($_GET["eliminar"])) {
     exit();
 }
 
-// Agregar libro
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["agregar"])) {
     $titulo = trim($_POST["titulo"]);
     $autor = trim($_POST["autor"]);
     $isbn = trim($_POST["isbn"]);
     $categoria = trim($_POST["categoria"]);
 
-    // Validaciones
     if (empty($titulo) || empty($autor)) {
         echo "<div class='alert alert-danger'>Los campos Título y Autor son obligatorios.</div>";
     } else if (!preg_match('/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/u', $autor)) {
@@ -51,53 +46,44 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["agregar"])) {
     } else if (!isset($_FILES["portada"]) || $_FILES["portada"]["error"] !== UPLOAD_ERR_OK) {
         echo "<div class='alert alert-danger'>Debe subir una imagen de portada válida.</div>";
     } else {
-        // Carpetas de subida (relativas a la raíz pública)
         $carpetaPDF = "uploads/pdf/";
         $carpetaPortadas = "uploads/portadas/";
 
-        // Crear carpetas si no existen
         if (!is_dir("../" . $carpetaPDF)) mkdir("../" . $carpetaPDF, 0777, true);
         if (!is_dir("../" . $carpetaPortadas)) mkdir("../" . $carpetaPortadas, 0777, true);
 
-        // Subir PDF
         $pdfRuta = null;
         $pdfNombre = time() . "_" . basename($_FILES["pdf"]["name"]);
         $pdfRutaCompleta = "../" . $carpetaPDF . $pdfNombre;
         if (move_uploaded_file($_FILES["pdf"]["tmp_name"], $pdfRutaCompleta)) {
-            $pdfRuta = $carpetaPDF . $pdfNombre;  // Guardar ruta relativa
+            $pdfRuta = $carpetaPDF . $pdfNombre; 
         } else {
             echo "<div class='alert alert-danger'>Error al subir el archivo PDF.</div>";
             exit;
         }
 
-        // Subir Portada
         $portadaRuta = null;
         $portadaNombre = time() . "_" . basename($_FILES["portada"]["name"]);
         $portadaRutaCompleta = "../" . $carpetaPortadas . $portadaNombre;
         if (move_uploaded_file($_FILES["portada"]["tmp_name"], $portadaRutaCompleta)) {
-            $portadaRuta = $carpetaPortadas . $portadaNombre; // Guardar ruta relativa
+            $portadaRuta = $carpetaPortadas . $portadaNombre;
         } else {
             echo "<div class='alert alert-danger'>Error al subir la imagen de portada.</div>";
             exit;
         }
-
-        // Insertar en BD
         $sql = "INSERT INTO libros (titulo, isbn, categoria, autores, formato, cantidad_disponible, pdf_url, portada_url)
                 VALUES (?, ?, ?, ?, 'Fisico', 1, ?, ?)";
         $stmt = $conn->prepare($sql);
         $stmt->bind_param("ssssss", $titulo, $isbn, $categoria, $autor, $pdfRuta, $portadaRuta);
         $stmt->execute();
 
-        // Redireccionar para evitar reenvío de formulario
         header("Location: agregarLibro.php");
         exit;
     }
 }
 
-// Obtener libros para mostrar
 $libros = $conn->query("SELECT * FROM libros ORDER BY id DESC");
 
-// Ver PDF si se solicita
 $pdfMostrar = null;
 if (isset($_GET['verpdf'])) {
     $idPdf = intval($_GET['verpdf']);
@@ -120,15 +106,15 @@ if (isset($_GET['verpdf'])) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
     <link rel="stylesheet" href="../styles/estilos.css" />
     <style>
-        /* Estilos para que los botones tengan el mismo tamaño y espacio */
         .btn-accion {
-            min-width: 100px; /* tamaño mínimo para todos */
+            min-width: 100px;
             margin: 2px 4px;
             white-space: nowrap;
         }
     </style>
 </head>
 <body class="body-inicio">
+    
 <header class="bg-white shadow-sm px-4 py-3 d-flex align-items-center justify-content-between">
     <div class="d-flex align-items-center gap-3">
         <img src="Imagenes/logo.png" alt="Logo SIBE" style="height: 40px;" />
@@ -157,7 +143,6 @@ if (isset($_GET['verpdf'])) {
     <div class="card shadow p-4">
         <h4 class="mb-4 fs-2"><strong>Gestión de Libros</strong></h4>
 
-        <!-- Formulario -->
         <form method="POST" enctype="multipart/form-data" class="row g-3 mb-4 needs-validation" novalidate>
             <div class="col-md-6">
                 <label class="form-label">Título <span class="text-danger">*</span></label>
@@ -198,7 +183,6 @@ if (isset($_GET['verpdf'])) {
             </div>
         </form>
 
-        <!-- Tabla -->
         <div class="table-responsive">
             <table class="table table-bordered table-hover text-center align-middle">
                 <thead class="table-light">

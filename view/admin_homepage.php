@@ -30,7 +30,7 @@ $nombre = $_SESSION['nombre_usuario'];
   <p class="lead mb-5">¿Qué desea gestionar hoy?</p>
 
   <div class="row justify-content-center g-4">
-    <!-- Gestión de Usuarios -->
+
     <div class="col-10 col-sm-6 col-md-4">
       <div class="card p-4 h-100">
         <i class="bi bi-people-fill fs-1 text-success mb-3"></i>
@@ -40,7 +40,6 @@ $nombre = $_SESSION['nombre_usuario'];
       </div>
     </div>
 
-    <!-- Gestión de Libros -->
     <div class="col-10 col-sm-6 col-md-4">
       <div class="card p-4 h-100">
         <i class="bi bi-book-fill fs-1 text-primary mb-3"></i>
@@ -50,7 +49,6 @@ $nombre = $_SESSION['nombre_usuario'];
       </div>
     </div>
 
-    <!-- Gestión de Préstamos -->
     <div class="col-10 col-sm-6 col-md-4">
       <div class="card p-4 h-100">
         <i class="bi bi-arrow-repeat fs-1 text-warning mb-3"></i>

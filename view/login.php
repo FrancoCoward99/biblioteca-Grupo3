@@ -93,7 +93,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <div class="container d-flex align-items-center justify-content-center min-vh-100">
     <div class="row shadow rounded overflow-hidden login-cuadro">
 
-      <!-- Imagen en HTML -->
       <div class="col-md-6 d-none d-md-block p-0">
         <img src="../view/imagenes/ArmariodeLibros-Login.jpg" 
              alt="Imagen de inicio de sesión" 
@@ -101,7 +100,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
              style="object-fit: cover;">
       </div>
 
-      <!-- Formulario -->
       <div class="col-md-6 login-form">
         <div class="text-center mb-4">
           <i class="bi bi-person-circle" style="font-size: 3rem;"></i>

@@ -2,9 +2,9 @@
 function abrirConexion() {
     $host = "localhost";
     $user = "root";
-    $password = "Guitarra.99";
+    $password = "hola";
     $db = "biblioteca_web";
-    $port = 3306;
+    $port = 3307;
 
     mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 

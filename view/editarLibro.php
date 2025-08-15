@@ -36,15 +36,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $categoria = $_POST["categoria"];
     $formato = $_POST["formato"];
 
-    // Mantener ruta actual de portada y pdf por defecto
     $imagenNombre = $libro['portada_url'];
     $pdfNombre = $libro['pdf_url'];
 
-    // Carpeta de portadas y pdfs
     $carpetaPortadas = "../uploads/portadas/";
     $carpetaPDF = "../uploads/pdf/";
 
-    // Procesar nueva imagen (si se sube)
     if (isset($_FILES['imagen']) && $_FILES['imagen']['error'] === UPLOAD_ERR_OK) {
         $tmpName = $_FILES['imagen']['tmp_name'];
         $nombreArchivo = time() . '_' . basename($_FILES['imagen']['name']);
@@ -58,7 +55,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         }
     }
 
-    // Procesar nuevo PDF (si se sube)
     if (isset($_FILES['pdf']) && $_FILES['pdf']['error'] === UPLOAD_ERR_OK) {
         $tmpNamePDF = $_FILES['pdf']['tmp_name'];
         $nombreArchivoPDF = time() . '_' . basename($_FILES['pdf']['name']);

@@ -93,7 +93,6 @@ if (!$resultado) {
         </td>
       </tr>
 
-      <!-- Modal individual de rechazo por préstamo -->
       <div class="modal fade" id="modalRechazo<?= $p['id'] ?>" tabindex="-1" aria-labelledby="rechazoLabel<?= $p['id'] ?>" aria-hidden="true">
         <div class="modal-dialog">
           <form method="POST" action="rechazar_prestamo.php">

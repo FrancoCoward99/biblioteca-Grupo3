@@ -74,10 +74,12 @@ if (!$resultado) {
             <a href="editar_usuario.php?id=<?= $usuario['id'] ?>" class="btn btn-sm btn-outline-primary">
               <i class="bi bi-pencil"></i> Editar
             </a>
-            <a href="eliminar_usuario.php?id=<?= $usuario['id'] ?>" class="btn btn-sm btn-outline-danger"
+            <a href="/BIBLIOTECA-GRUPO3/view/eliminar_usuario.php?id=<?= $usuario['id'] ?>"
+   class="btn btn-sm btn-outline-danger"
    onclick="return confirm('¿Estás seguro que quieres eliminar este usuario?');">
    <i class="bi bi-trash"></i> Eliminar
 </a>
+
           </td>
         </tr>
       <?php endwhile; ?>

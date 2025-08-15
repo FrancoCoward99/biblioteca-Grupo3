@@ -3,10 +3,11 @@ session_start();
 
 require_once '../accesoDatos/conexion.php';
 
-if (!isset($_SESSION['nombreUsuario']) || $_SESSION['rol'] !== 'administrador') {
-    header("Location: ../login.php");
+if (!isset($_SESSION['nombre_usuario']) || $_SESSION['rol'] !== 'administrador') {
+    header("Location: /BIBLIOTECA-GRUPO3/view/login.php");
     exit;
 }
+
 
 $idUsuario = $_GET['id'] ?? null;
 
@@ -33,5 +34,6 @@ $delete->execute();
 
 cerrarConexion($mysqli);
 
-echo '<script>alert("Usuario eliminado correctamente."); window.location.href = "gestion_usuarios.php";</script>';
+echo '<script>alert("Usuario eliminado correctamente."); window.location.href = "/BIBLIOTECA-GRUPO3/view/gestion_usuarios.php";</script>';
+
 ?>

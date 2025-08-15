@@ -83,10 +83,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <?php } ?>
   </div>
 <?php } ?>
-
-
-
-
         <form method="POST">
           <div class="mb-3">
             <label class="form-label fw-bold">Nombre del estudiante</label>

@@ -12,3 +12,10 @@
 |Fecha:2025-08-14 06:20:14|Error: Intento de login con correo no registrado | Pantalla: login.php | Usuario: franco99cr@gmail.com
 |Fecha:2025-08-14 06:20:20|Error: Intento de login con contraseña incorrecta | Pantalla: login.php | Usuario: lucas@gmail.com
 |Fecha:2025-08-14 06:20:29|Error: Intento de login con contraseña incorrecta | Pantalla: login.php | Usuario: lucas@gmail.com
+|Fecha:2025-08-15 00:05:09|Error: Error al conectar a la base de datos | Pantalla: login.php | Usuario: No autenticado
+|Fecha:2025-08-15 00:07:31|Error: Intento de login con contraseña incorrecta | Pantalla: login.php | Usuario: mariaAdmin@gmail.com
+|Fecha:2025-08-15 02:36:31|Error: Intento de login con correo no registrado | Pantalla: login.php | Usuario: dani@gmail.com
+|Fecha:2025-08-15 02:36:42|Error: Intento de login con correo no registrado | Pantalla: login.php | Usuario: daniii@gmail.com
+|Fecha:2025-08-15 02:36:55|Error: Intento de login con correo no registrado | Pantalla: login.php | Usuario: dani@gmail.com
+|Fecha:2025-08-15 02:37:24|Error: Intento de login con correo no registrado | Pantalla: login.php | Usuario: dani@gmail.com
+|Fecha:2025-08-15 02:38:10|Error: Intento de login con contraseña incorrecta | Pantalla: login.php | Usuario: mariaAdmin@gmail.com

@@ -11,7 +11,7 @@ $nombre = $_SESSION['nombre_usuario'];
 require_once '../accesoDatos/conexion.php';
 $mysqli = abrirConexion();
 
-// Obtener todos los libros
+
 $query = "SELECT id, titulo, imagen FROM libros";
 $result = $mysqli->query($query);
 $libros = $result->fetch_all(MYSQLI_ASSOC);
@@ -46,7 +46,6 @@ $libros = $result->fetch_all(MYSQLI_ASSOC);
   <a href="catalogo.php" class="btn btn-success px-4 mt-3">Comenzar</a>
 </section>
 
-<!-- Carrusel de libros -->
 <div class="container mb-5">
   <h4 class="fw-bold text-center mb-4">Todos los libros</h4>
   <?php if (count($libros) > 0): ?>
@@ -85,8 +84,7 @@ $libros = $result->fetch_all(MYSQLI_ASSOC);
     <p class="text-center">No hay libros registrados en la base de datos.</p>
   <?php endif; ?>
 </div>
-
-<!-- Noticias relacionadas con libros -->
+>
 <section class="container pb-5">
   <h4 class="mb-4 fw-bold">Noticias y novedades</h4>
   <div class="row g-4">
